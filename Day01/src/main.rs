@@ -1,5 +1,8 @@
+use std::fs;
+
 fn main() {
-    println!("Hello, world!");
+    let input: String = fs::read_to_string("./input.txt").unwrap();
+    println!("{}", solve(input));
 }
 
 #[test]
@@ -10,12 +13,13 @@ fn example_input_test() {
             pqr3stu8vwx\n\
             a1b2c3d4e5f\n\
             treb7uchet"
+                .to_string()
         ),
         142
     );
 }
 
-fn solve(input: &str) -> u32 {
+fn solve(input: String) -> u32 {
     let mut first_num = ' ';
     let mut last_num = ' ';
     let mut result = 0;
