@@ -1,4 +1,4 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
 fn main() {
     let input: String = fs::read_to_string("./input.txt").unwrap();
@@ -63,5 +63,22 @@ fn example_input_part_2_test() {
 }
 
 fn solve_part_2(input: &String) -> u32 {
-    0
+    let text_numbers: HashMap<&str, &str> = HashMap::from([
+        ("one", "o1ne"),
+        ("two", "t2wo"),
+        ("three", "t3hree"),
+        ("four", "f4our"),
+        ("five", "f5ive"),
+        ("six", "s6ix"),
+        ("seven", "s7even"),
+        ("eight", "e8ight"),
+        ("nine", "n9ine"),
+    ]);
+
+    let mut formatted_input = input.clone();
+    for (text, number) in text_numbers {
+        formatted_input = formatted_input.replace(text, number);
+    }
+
+    solve_part_1(&formatted_input)
 }
