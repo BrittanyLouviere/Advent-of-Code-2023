@@ -25,7 +25,7 @@ fn solve_part_1(input: &str) -> u32 {
     let mut first_num = ' ';
     let mut last_num = ' ';
     let mut result = 0;
-    for (_, a) in input.chars().enumerate() {
+    for a in input.chars() {
         if a == '\n' {
             let number = format!("{first_num}{last_num}");
             result += number.parse::<u32>().unwrap();
