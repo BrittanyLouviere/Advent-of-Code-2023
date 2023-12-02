@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 use std::fs;
 
 fn main() {
@@ -11,7 +12,7 @@ fn example_input_part_1_test() {
     assert_eq!(solve_part_1(&"".to_string()), 0);
 }
 
-fn solve_part_1(input: &String) -> u32 {
+fn solve_part_1(input: &str) -> u32 {
     0
 }
 
@@ -20,6 +21,6 @@ fn example_input_part_2_test() {
     assert_eq!(solve_part_2(&"".to_string()), 0);
 }
 
-fn solve_part_2(input: &String) -> u32 {
+fn solve_part_2(input: &str) -> u32 {
     0
 }

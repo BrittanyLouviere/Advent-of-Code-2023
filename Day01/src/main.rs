@@ -1,3 +1,4 @@
+#![warn(clippy::pedantic)]
 use std::{collections::HashMap, fs};
 
 fn main() {
@@ -20,13 +21,13 @@ fn example_input_part_1_test() {
     );
 }
 
-fn solve_part_1(input: &String) -> u32 {
+fn solve_part_1(input: &str) -> u32 {
     let mut first_num = ' ';
     let mut last_num = ' ';
     let mut result = 0;
     for (_, a) in input.chars().enumerate() {
         if a == '\n' {
-            let number = format!("{}{}", first_num, last_num);
+            let number = format!("{first_num}{last_num}");
             result += number.parse::<u32>().unwrap();
             first_num = ' ';
             last_num = ' ';
@@ -39,7 +40,7 @@ fn solve_part_1(input: &String) -> u32 {
         }
     }
 
-    let number = format!("{}{}", first_num, last_num);
+    let number = format!("{first_num}{last_num}");
     result += number.parse::<u32>().unwrap();
 
     result
@@ -62,7 +63,7 @@ fn example_input_part_2_test() {
     );
 }
 
-fn solve_part_2(input: &String) -> u32 {
+fn solve_part_2(input: &str) -> u32 {
     let text_numbers: HashMap<&str, &str> = HashMap::from([
         ("one", "o1ne"),
         ("two", "t2wo"),
@@ -75,7 +76,7 @@ fn solve_part_2(input: &String) -> u32 {
         ("nine", "n9ine"),
     ]);
 
-    let mut formatted_input = input.clone();
+    let mut formatted_input = input.to_owned();
     for (text, number) in text_numbers {
         formatted_input = formatted_input.replace(text, number);
     }
