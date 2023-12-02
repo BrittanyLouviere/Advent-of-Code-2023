@@ -62,8 +62,31 @@ fn example_input_part_2_test() {
     );
 }
 
-fn solve_part_2(_input: &str) -> u32 {
-    // power = #red * #green #blue
+fn solve_part_2(input: &str) -> u32 {
+    // power = #red * #green * #blue
     // result = sum of power of each game
-    0
+
+    let mut result = 0;
+
+    for line in input.lines() {
+        let mut color_counts: HashMap<&str, u32> =
+            HashMap::from([("red", 0), ("green", 0), ("blue", 0)]);
+
+        let index: usize = line.find(':').unwrap();
+        let split_line: Vec<&str> = line[index + 1..].split([',', ';']).collect();
+
+        for hand in split_line {
+            let hand_split: Vec<&str> = hand.split_whitespace().collect();
+            let count = hand_split[0].parse::<u32>().unwrap();
+            let color = hand_split[1];
+
+            if count > color_counts[color] {
+                *color_counts.get_mut(color).unwrap() = count;
+            }
+        }
+
+        let power: u32 = color_counts.values().product();
+        result += power;
+    }
+    result
 }
