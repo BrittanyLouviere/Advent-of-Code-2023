@@ -24,12 +24,12 @@ fn solve_part_1(input: &str) -> u32 {
                 lines[i + 1]
             }
         );
-        sum += check_line(&prev, &curr, &next);
+        sum += check_line_part_1(&prev, &curr, &next);
     }
     sum
 }
 
-fn check_line(prev: &str, curr: &str, next: &str) -> u32 {
+fn check_line_part_1(prev: &str, curr: &str, next: &str) -> u32 {
     let numbers: Vec<&str> = curr
         .split(|ch: char| !ch.is_numeric())
         .filter(|x| x != &"")
@@ -55,7 +55,73 @@ fn check_line(prev: &str, curr: &str, next: &str) -> u32 {
     sum
 }
 
-fn solve_part_2(_input: &str) -> u32 {
+fn solve_part_2(input: &str) -> u32 {
+    // find `*` that is adjacent to exactly two numbers
+    // multiply numbers together
+    // sum all these together
+    let mut sum = 0;
+
+    let lines: Vec<&str> = input.lines().collect();
+    let padding_line = &".".repeat(lines[0].len());
+    for i in 0..lines.len() {
+        let prev = format!(".{}.", if i == 0 { padding_line } else { lines[i - 1] });
+        let curr = format!(".{}.", lines[i]);
+        let next = format!(
+            ".{}.",
+            if i == lines.len() - 1 {
+                padding_line
+            } else {
+                lines[i + 1]
+            }
+        );
+        sum += check_line_part_2(&prev, &curr, &next);
+    }
+    sum
+}
+
+fn check_line_part_2(prev: &str, curr: &str, next: &str) -> u32 {
+    let star_indeces: Vec<(usize, &str)> = curr.match_indices('*').collect();
+    let mut sum = 0;
+
+    let mut numbers = vec![];
+    for line in [prev, curr, next] {
+        numbers.extend(find_number_indeces(line));
+    }
+
+    for (star_index, _) in star_indeces {
+        sum += find_prodcut(&numbers, star_index);
+    }
+
+    sum
+}
+
+fn find_number_indeces(line: &str) -> Vec<(usize, &str)> {
+    let mut found = vec![];
+    let numbers = line.split(|ch: char| !ch.is_numeric()).filter(|x| x != &"");
+    let mut start_index = 0;
+
+    for number in numbers {
+        let index = line[start_index..].find(number).unwrap() + start_index;
+        found.push((index, number));
+        start_index = index + number.len();
+    }
+
+    found
+}
+
+fn find_prodcut(numbers: &Vec<(usize, &str)>, star_index: usize) -> u32 {
+    let adjacent_nums: Vec<&(usize, &str)> = numbers
+        .iter()
+        .filter(|(i, num)| star_index <= i + num.len() && star_index >= i - 1)
+        .collect();
+
+    if adjacent_nums.len() == 2 {
+        return adjacent_nums
+            .iter()
+            .map(|(_, num)| num.parse::<u32>().unwrap())
+            .product();
+    }
+
     0
 }
 
