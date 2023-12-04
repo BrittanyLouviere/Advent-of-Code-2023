@@ -32,7 +32,26 @@ mod part_1 {
 
 mod part_2 {
     pub(crate) fn solve(input: &str) -> u32 {
-        0
+        let line_count = input.matches('\n').count();
+        let mut card_counts = vec![1; line_count + 1];
+
+        for (card_id, line) in input.lines().enumerate() {
+            let start = line.find(':').unwrap() + 1;
+            let mid = line.find('|').unwrap();
+            let win_nums: Vec<&str> = line[start..(mid - 1)].split_whitespace().collect();
+            let my_nums: Vec<&str> = line[(mid + 2)..].split_whitespace().collect();
+
+            let mut count = 0;
+            for num in my_nums {
+                if win_nums.contains(&num) {
+                    count += 1;
+                }
+            }
+            for i in (card_id + 1)..=(card_id + count) {
+                card_counts[i] += card_counts[card_id];
+            }
+        }
+        card_counts.iter().sum()
     }
 }
 
