@@ -13,17 +13,13 @@ mod part_1 {
         for line in input.lines() {
             let start = line.find(':').unwrap() + 1;
             let mid = line.find('|').unwrap();
+            
             let win_nums: Vec<&str> = line[start..(mid - 1)].split_whitespace().collect();
-            let my_nums: Vec<&str> = line[(mid + 2)..].split_whitespace().collect();
+            let my_nums = line[(mid + 2)..].split_whitespace();
 
-            let mut count = 0;
-            for num in my_nums {
-                if win_nums.contains(&num) {
-                    count += 1;
-                }
-            }
+            let count = my_nums.filter(|x| win_nums.contains(x)).count();
             if count > 0 {
-                points += 2u32.pow(count - 1);
+                points += 2u32.pow((count - 1).try_into().unwrap());
             }
         }
         points
