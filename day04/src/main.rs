@@ -40,8 +40,7 @@ mod part_2 {
 mod tests {
     use super::*;
 
-    const example_input: &str = "\n\
-    Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\n\
+    const example_input: &str = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\n\
     Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\n\
     Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\n\
     Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\n\
@@ -55,6 +54,6 @@ mod tests {
 
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(&example_input), 0);
+        assert_eq!(part_2::solve(&example_input), 30);
     }
 }
