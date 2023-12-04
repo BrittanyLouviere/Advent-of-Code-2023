@@ -9,7 +9,24 @@ fn main() {
 
 mod part_1 {
     pub(crate) fn solve(input: &str) -> u32 {
-        0
+        let mut points = 0;
+        for line in input.lines() {
+            let start = line.find(':').unwrap() + 1;
+            let mid = line.find('|').unwrap();
+            let win_nums: Vec<&str> = line[start..(mid - 1)].split_whitespace().collect();
+            let my_nums: Vec<&str> = line[(mid+2)..].split_whitespace().collect();
+
+            let mut count = 0;
+            for num in my_nums {
+                if win_nums.contains(&num) {
+                    count += 1;
+                }
+            }
+            if count > 0 {
+                points += 2u32.pow(count - 1);
+            }
+        }
+        points
     }
 }
 
