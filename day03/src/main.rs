@@ -112,7 +112,7 @@ mod part_2 {
         found
     }
 
-    fn find_prodcut(numbers: &Vec<(usize, &str)>, star_index: usize) -> u32 {
+    fn find_prodcut(numbers: &[(usize, &str)], star_index: usize) -> u32 {
         let adjacent_nums: Vec<&(usize, &str)> = numbers
             .iter()
             .filter(|(i, num)| star_index <= i + num.len() && star_index >= i - 1)
