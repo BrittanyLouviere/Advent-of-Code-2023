@@ -14,7 +14,7 @@ mod part_1 {
             let start = line.find(':').unwrap() + 1;
             let mid = line.find('|').unwrap();
             let win_nums: Vec<&str> = line[start..(mid - 1)].split_whitespace().collect();
-            let my_nums: Vec<&str> = line[(mid+2)..].split_whitespace().collect();
+            let my_nums: Vec<&str> = line[(mid + 2)..].split_whitespace().collect();
 
             let mut count = 0;
             for num in my_nums {
@@ -40,23 +40,21 @@ mod part_2 {
 mod tests {
     use super::*;
 
+    const example_input: &str = "\n\
+    Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\n\
+    Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\n\
+    Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\n\
+    Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\n\
+    Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\n\
+    Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
+
     #[test]
     fn example_input_part_1_test() {
-        assert_eq!(
-            part_1::solve(
-                "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\n\
-        Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\n\
-        Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\n\
-        Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\n\
-        Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\n\
-        Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"
-            ),
-            13
-        );
+        assert_eq!(part_1::solve(&example_input), 13);
     }
 
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(""), 0);
+        assert_eq!(part_2::solve(&example_input), 0);
     }
 }
