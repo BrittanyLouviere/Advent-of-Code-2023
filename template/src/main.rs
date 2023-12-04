@@ -23,13 +23,15 @@ mod part_2 {
 mod tests {
     use super::*;
 
+    const EXAMPLE_INPUT: &str = "";
+
     #[test]
     fn example_input_part_1_test() {
-        assert_eq!(part_1::solve(""), 0);
+        assert_eq!(part_1::solve(EXAMPLE_INPUT), 0);
     }
 
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(""), 0);
+        assert_eq!(part_2::solve(EXAMPLE_INPUT), 0);
     }
 }
