@@ -9,9 +9,12 @@ fn main() {
 }
 
 mod utility {
+    use std::ops::RangeInclusive;
+
     struct Conversion {
-        start: i64,
-        end: i64,
+        // start: i64,
+        // end: i64,
+        range: RangeInclusive<i64>,
         conversion: i64,
     }
 
@@ -34,8 +37,7 @@ mod utility {
                 let end = start + parsed_line[2];
                 let conversion = parsed_line[0] - start;
                 parsed_map.push(Conversion {
-                    start,
-                    end,
+                    range: start..=end,
                     conversion,
                 });
             }
@@ -48,7 +50,7 @@ mod utility {
             let mut conversion = self
                 .conversions
                 .iter()
-                .filter(|x| source >= x.start && source <= x.end);
+                .filter(|x| x.range.contains(&source));
             if let Some(c) = conversion.next() {
                 return source + c.conversion;
             }
