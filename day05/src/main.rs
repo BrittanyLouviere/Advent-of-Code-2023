@@ -12,10 +12,14 @@ mod utility {
     use std::ops::RangeInclusive;
 
     struct Conversion {
-        // start: i64,
-        // end: i64,
         range: RangeInclusive<i64>,
         conversion: i64,
+    }
+
+    impl Conversion {
+        fn contains(&self, item: i64) -> bool {
+            self.range.contains(&item)
+        }
     }
 
     pub(crate) struct Map {
@@ -47,10 +51,7 @@ mod utility {
         }
 
         pub(crate) fn convert(&self, source: i64) -> i64 {
-            let mut conversion = self
-                .conversions
-                .iter()
-                .filter(|x| x.range.contains(&source));
+            let mut conversion = self.conversions.iter().filter(|x| x.contains(source));
             if let Some(c) = conversion.next() {
                 return source + c.conversion;
             }
