@@ -44,10 +44,6 @@ mod utility {
             }
         }
 
-        fn push(&mut self, conversion: Conversion) {
-            self.conversions.push(conversion);
-        }
-
         pub(crate) fn convert(&self, source: i64) -> i64 {
             let mut conversion = self
                 .conversions
