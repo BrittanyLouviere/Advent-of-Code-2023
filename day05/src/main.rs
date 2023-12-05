@@ -8,39 +8,19 @@ fn main() {
     println!("Part 2: {}", part_2::solve(&input));
 }
 
-mod part_1 {
-    pub(crate) fn solve(input: &str) -> i64 {
-        let mut maps = input.split("\n\n");
-        let stripped_line = maps.next().unwrap().replace("seeds: ", "");
-        let mut sources: Vec<i64> = stripped_line
-            .split_whitespace()
-            .map(|x| x.parse::<i64>().unwrap())
-            .collect();
-
-        for map in maps {
-            let map = Map::new(map);
-            let mut destinations = vec![];
-            for source in sources {
-                destinations.push(map.convert(source));
-            }
-            sources = destinations;
-        }
-
-        *sources.iter().min().unwrap()
-    }
-
+mod utility {
     struct Conversion {
         start: i64,
         end: i64,
         conversion: i64,
     }
 
-    struct Map {
+    pub(crate) struct Map {
         conversions: Vec<Conversion>,
     }
 
     impl Map {
-        fn new(map: &str) -> Map {
+        pub(crate) fn new(map: &str) -> Map {
             let mut parsed_map = vec![];
             let mut lines = map.lines();
             lines.next();
@@ -68,7 +48,7 @@ mod part_1 {
             self.conversions.push(conversion);
         }
 
-        fn convert(&self, source: i64) -> i64 {
+        pub(crate) fn convert(&self, source: i64) -> i64 {
             let mut conversion = self
                 .conversions
                 .iter()
@@ -78,6 +58,30 @@ mod part_1 {
             }
             source
         }
+    }
+}
+
+mod part_1 {
+    use crate::utility::Map;
+
+    pub(crate) fn solve(input: &str) -> i64 {
+        let mut maps = input.split("\n\n");
+        let stripped_line = maps.next().unwrap().replace("seeds: ", "");
+        let mut sources: Vec<i64> = stripped_line
+            .split_whitespace()
+            .map(|x| x.parse::<i64>().unwrap())
+            .collect();
+
+        for map in maps {
+            let map = Map::new(map);
+            let mut destinations = vec![];
+            for source in sources {
+                destinations.push(map.convert(source));
+            }
+            sources = destinations;
+        }
+
+        *sources.iter().min().unwrap()
     }
 }
 
