@@ -2,7 +2,8 @@
 use std::fs;
 
 fn main() {
-    let input: String = fs::read_to_string("./{{project-name}}/input.txt").unwrap();
+    let input: String =
+        fs::read_to_string("./{{project-name}}/input.txt").expect("Input file could not be read.");
     println!("Part 1: {}", part_1::solve(&input));
     println!("Part 2: {}", part_2::solve(&input));
 }
