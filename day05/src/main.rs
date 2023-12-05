@@ -9,8 +9,75 @@ fn main() {
 }
 
 mod part_1 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        0
+    pub(crate) fn solve(input: &str) -> i64 {
+        let mut maps = input.split("\n\n");
+        let stripped_line = maps.next().unwrap().replace("seeds: ", "");
+        let mut sources: Vec<i64> = stripped_line
+            .split_whitespace()
+            .map(|x| x.parse::<i64>().unwrap())
+            .collect();
+
+        for map in maps {
+            let map = Map::new(map);
+            let mut destinations = vec![];
+            for source in sources {
+                destinations.push(map.convert(source));
+            }
+            sources = destinations;
+        }
+
+        *sources.iter().min().unwrap()
+    }
+
+    struct Conversion {
+        start: i64,
+        end: i64,
+        conversion: i64,
+    }
+
+    struct Map {
+        conversions: Vec<Conversion>,
+    }
+
+    impl Map {
+        fn new(map: &str) -> Map {
+            let mut parsed_map = vec![];
+            let mut lines = map.lines();
+            lines.next();
+
+            for line in lines {
+                let parsed_line: Vec<i64> = line
+                    .split_whitespace()
+                    .map(|x| x.parse::<i64>().unwrap())
+                    .collect();
+                let start = parsed_line[1];
+                let end = start + parsed_line[2];
+                let conversion = parsed_line[0] - start;
+                parsed_map.push(Conversion {
+                    start,
+                    end,
+                    conversion,
+                });
+            }
+            Map {
+                conversions: parsed_map,
+            }
+        }
+
+        fn push(&mut self, conversion: Conversion) {
+            self.conversions.push(conversion);
+        }
+
+        fn convert(&self, source: i64) -> i64 {
+            let mut conversion = self
+                .conversions
+                .iter()
+                .filter(|x| source >= x.start && source <= x.end);
+            if let Some(c) = conversion.next() {
+                return source + c.conversion;
+            }
+            source
+        }
     }
 }
 
