@@ -38,7 +38,7 @@ mod utility {
                     .map(|x| x.parse::<i64>().unwrap())
                     .collect();
                 let start = parsed_line[1];
-                let end = start + parsed_line[2];
+                let end = start + parsed_line[2] - 1;
                 let conversion = parsed_line[0] - start;
                 parsed_map.push(Conversion {
                     range: start..=end,
@@ -56,6 +56,59 @@ mod utility {
                 return source + c.conversion;
             }
             source
+        }
+
+        pub(crate) fn convert_range(
+            &self,
+            source_range: RangeInclusive<i64>,
+        ) -> Vec<RangeInclusive<i64>> {
+            let mut dest_range = vec![];
+            let mut source_ranges = vec![source_range];
+
+            'source_loop: while let Some(source) = source_ranges.pop() {
+                for conv in &self.conversions {
+                    let start_contained = conv.contains(*source.start());
+                    let end_contained = conv.contains(*source.end());
+
+                    if start_contained && end_contained {
+                        // fully mapped by this conversion
+                        let new_start = source.start() + conv.conversion;
+                        let new_end = source.end() + conv.conversion;
+                        dest_range.push(new_start..=new_end);
+
+                        continue 'source_loop;
+                    } else if start_contained {
+                        // first half mapped
+                        let new_start = source.start() + conv.conversion;
+                        let new_end = conv.range.end() + conv.conversion;
+                        dest_range.push(new_start..=new_end);
+
+                        // second half not mapped
+                        let new_start = conv.range.end() + 1;
+                        let new_end = source.end();
+                        source_ranges.push(new_start..=*new_end);
+
+                        continue 'source_loop;
+                    } else if end_contained {
+                        // second half mapped
+                        let new_start = conv.range.start() + conv.conversion;
+                        let new_end = source.end() + conv.conversion;
+                        dest_range.push(new_start..=new_end);
+
+                        // first half not mapped
+                        let new_start = source.start();
+                        let new_end = conv.range.start() - 1;
+                        source_ranges.push(*new_start..=new_end);
+
+                        continue 'source_loop;
+                    }
+                }
+
+                // no mapping to any conversion
+                dest_range.push(source.clone())
+            }
+
+            dest_range
         }
     }
 }
@@ -85,8 +138,31 @@ mod part_1 {
 }
 
 mod part_2 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        0
+    use crate::utility::Map;
+    use std::ops::RangeInclusive;
+
+    pub(crate) fn solve(input: &str) -> i64 {
+        let mut maps = input.split("\n\n");
+        let stripped_line = maps.next().unwrap().replace("seeds: ", "");
+        let mut seeds = stripped_line
+            .split_whitespace()
+            .map(|x| x.parse::<i64>().unwrap());
+
+        let mut sources: Vec<RangeInclusive<i64>> = [].to_vec();
+        while let (Some(start), Some(range)) = (seeds.next(), seeds.next()) {
+            sources.push(start..=(start + range));
+        }
+
+        for map in maps {
+            let map = Map::new(map);
+            let mut destinations = vec![];
+            for source in sources {
+                destinations.append(&mut map.convert_range(source));
+            }
+            sources = destinations;
+        }
+
+        *sources.iter().map(|x| x.start()).min().unwrap()
     }
 }
 
