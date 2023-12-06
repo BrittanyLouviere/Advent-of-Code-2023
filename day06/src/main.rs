@@ -8,8 +8,21 @@ fn main() {
     println!("Part 2: {}", part_2::solve(&input));
 }
 
+pub(crate) mod utility {
+    pub(crate) fn find_win_count(time: u64, dist_to_beat: u64) -> u64 {
+        let mut win_count = 0;
+        for charge_time in 1..time {
+            if charge_time * (time - charge_time) > dist_to_beat {
+                win_count += 1;
+            }
+        }
+        win_count
+    }
+}
+
 mod part_1 {
-    pub(crate) fn solve(input: &str) -> u32 {
+    use crate::utility::find_win_count;
+    pub(crate) fn solve(input: &str) -> u64 {
         let lines: Vec<Vec<&str>> = input
             .lines()
             .map(|x| x.split_whitespace().collect())
@@ -20,24 +33,32 @@ mod part_1 {
         let mut win_prod = 1;
 
         for i in 0..times.len() {
-            let time = times[i].parse::<i32>().unwrap();
-            let distance = distances[i].parse::<i32>().unwrap();
-            let mut win_count = 0;
+            let time = times[i].parse::<u64>().unwrap();
+            let distance = distances[i].parse::<u64>().unwrap();
 
-            for charge_time in 1..time {
-                if charge_time * (time - charge_time) > distance {
-                    win_count += 1;
-                }
-            }
-            win_prod *= win_count;
+            win_prod *= find_win_count(time, distance);
         }
         win_prod
     }
 }
 
 mod part_2 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        0
+    use crate::utility::find_win_count;
+    pub(crate) fn solve(input: &str) -> u64 {
+        let lines: Vec<&str> = input.lines().collect();
+
+        let time = &lines[0]
+            .replace("Time:", "")
+            .replace(' ', "")
+            .parse::<u64>()
+            .unwrap();
+        let distance = &lines[1]
+            .replace("Distance:", "")
+            .replace(' ', "")
+            .parse::<u64>()
+            .unwrap();
+
+        find_win_count(*time, *distance)
     }
 }
 
@@ -55,6 +76,6 @@ mod tests {
 
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(EXAMPLE_INPUT), 0);
+        assert_eq!(part_2::solve(EXAMPLE_INPUT), 71503);
     }
 }
