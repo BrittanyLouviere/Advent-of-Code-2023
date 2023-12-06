@@ -20,3 +20,6 @@ Cargo.lock
 perf.data.old
 perf.data
 flamegraph.svg
+
+# VSCode ignores
+launch.json
