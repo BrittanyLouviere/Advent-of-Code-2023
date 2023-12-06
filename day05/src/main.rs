@@ -105,7 +105,7 @@ mod utility {
                 }
 
                 // no mapping to any conversion
-                dest_range.push(source.clone())
+                dest_range.push(source.clone());
             }
 
             dest_range
@@ -162,7 +162,7 @@ mod part_2 {
             sources = destinations;
         }
 
-        *sources.iter().map(|x| x.start()).min().unwrap()
+        *sources.iter().map(std::ops::RangeInclusive::start).min().unwrap()
     }
 }
 
