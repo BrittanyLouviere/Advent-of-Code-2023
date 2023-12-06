@@ -10,7 +10,28 @@ fn main() {
 
 mod part_1 {
     pub(crate) fn solve(input: &str) -> u32 {
-        0
+        let lines: Vec<Vec<&str>> = input
+            .lines()
+            .map(|x| x.split_whitespace().collect())
+            .collect();
+
+        let times = &lines[0][1..];
+        let distances = &lines[1][1..];
+        let mut win_prod = 1;
+
+        for i in 0..times.len() {
+            let time = times[i].parse::<i32>().unwrap();
+            let distance = distances[i].parse::<i32>().unwrap();
+            let mut win_count = 0;
+
+            for charge_time in 1..time {
+                if charge_time * (time - charge_time) > distance {
+                    win_count += 1;
+                }
+            }
+            win_prod *= win_count;
+        }
+        win_prod
     }
 }
 
