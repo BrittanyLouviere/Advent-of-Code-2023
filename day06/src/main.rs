@@ -24,11 +24,12 @@ mod part_2 {
 mod tests {
     use super::*;
 
-    const EXAMPLE_INPUT: &str = "";
+    const EXAMPLE_INPUT: &str = "Time:      7  15   30\n\
+    Distance:  9  40  200";
 
     #[test]
     fn example_input_part_1_test() {
-        assert_eq!(part_1::solve(EXAMPLE_INPUT), 0);
+        assert_eq!(part_1::solve(EXAMPLE_INPUT), 288);
     }
 
     #[test]
