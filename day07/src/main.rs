@@ -159,6 +159,6 @@ mod tests {
 
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(EXAMPLE_INPUT), 0);
+        assert_eq!(part_2::solve(EXAMPLE_INPUT), 5905);
     }
 }
