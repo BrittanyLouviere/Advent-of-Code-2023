@@ -9,7 +9,7 @@ fn main() {
 }
 
 pub(crate) mod utility {
-    use std::collections::HashSet;
+    use std::collections::{HashMap, HashSet};
 
     #[derive(PartialEq, PartialOrd, Eq, Ord, Debug)]
     pub(crate) enum HandType {
@@ -25,39 +25,28 @@ pub(crate) mod utility {
     #[derive(PartialOrd, PartialEq, Eq, Ord)]
     pub(crate) struct Hand {
         pub(crate) hand_type: HandType,
-        pub(crate) cards: String,
+        pub(crate) cards: Vec<u64>,
         pub(crate) bid: u64,
     }
 
-    //      my custom definition of Ord isn't working?
-    // impl Ord for Hand {
-    //     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-    //         let sh = self
-    //             .cards
-    //             .replace("A", "Z")
-    //             .replace("K", "Y")
-    //             .replace("Q", "X")
-    //             .replace("J", "W")
-    //             .replace("T", "V");
-    //         let oh = other
-    //             .cards
-    //             .replace("A", "Z")
-    //             .replace("K", "Y")
-    //             .replace("Q", "X")
-    //             .replace("J", "W")
-    //             .replace("T", "V");
-    //         (&self.hand_type, sh).cmp(&(&other.hand_type, oh))
-    //     }
-    // }
-
     impl Hand {
-        pub(crate) fn new(cards: String, bid: u64) -> Hand {
-            let hand_type = Self::get_type(&cards);
+        pub(crate) fn new(cards: &str, bid: u64, card_ranks: &HashMap<char, u64>) -> Hand {
+            let hand_type = Self::get_type(cards);
+            let cards = Self::convert_cards_to_ranks(cards, card_ranks);
             Hand {
                 hand_type,
                 cards,
                 bid,
             }
+        }
+
+        fn convert_cards_to_ranks(cards: &str, card_ranks: &HashMap<char, u64>) -> Vec<u64> {
+            let mut ranks = vec![];
+            for c in cards.chars() {
+                let test = card_ranks[&c];
+                ranks.push(test);
+            }
+            ranks
         }
 
         fn get_type(cards: &str) -> HandType {
@@ -96,27 +85,24 @@ pub(crate) mod utility {
 }
 
 mod part_1 {
-    use std::vec;
-
     use crate::utility::Hand;
+    use std::{collections::HashMap, vec};
 
     pub(crate) fn solve(input: &str) -> u64 {
+        let card_ranks: HashMap<_, _> = "23456789TJQKA"
+            .chars()
+            .zip([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            .collect();
         let mut hands = vec![];
+
         for line in input.lines() {
             let mut parsed = line.split_whitespace();
-            let cards = parsed
-                .next()
-                .unwrap()
-                .to_string()
-                .replace('A', "Z")
-                .replace('K', "Y")
-                .replace('Q', "X")
-                .replace('J', "W")
-                .replace('T', "V");
+            let cards = parsed.next().unwrap().to_string();
             let bid = parsed.next().unwrap().parse::<u64>().unwrap();
 
-            hands.push(Hand::new(cards, bid));
+            hands.push(Hand::new(&cards, bid, &card_ranks));
         }
+
         hands.sort();
         let mut sum = 0;
         for (i, hand) in hands.iter().enumerate() {
@@ -134,6 +120,8 @@ mod part_2 {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use crate::utility::{Hand, HandType};
 
     use super::*;
@@ -151,22 +139,22 @@ mod tests {
 
     #[test]
     fn get_type_test() {
+        let card_ranks: HashMap<_, _> = "23456789TJQKA"
+            .chars()
+            .zip([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            .collect();
         let mut hands = vec![];
-        hands.push(Hand::new("32T3K".to_string(), 0));
-        hands.push(Hand::new("KK677".to_string(), 0));
-        hands.push(Hand::new("KTJJT".to_string(), 0));
-        hands.push(Hand::new("T55J5".to_string(), 0));
-        hands.push(Hand::new("QQQJA".to_string(), 0));
+        hands.push(Hand::new("32T3K", 0, &card_ranks));
+        hands.push(Hand::new("KK677", 0, &card_ranks));
+        hands.push(Hand::new("KTJJT", 0, &card_ranks));
+        hands.push(Hand::new("T55J5", 0, &card_ranks));
+        hands.push(Hand::new("QQQJA", 0, &card_ranks));
 
         assert_eq!(hands[0].hand_type, HandType::OnePair);
         assert_eq!(hands[1].hand_type, HandType::TwoPair);
         assert_eq!(hands[2].hand_type, HandType::TwoPair);
         assert_eq!(hands[3].hand_type, HandType::ThreeKind);
         assert_eq!(hands[4].hand_type, HandType::ThreeKind);
-
-        // assert!(hands[1] > hands[0]);
-        // assert!(hands[2] > hands[1]);
-        // assert!(hands[4] > hands[3]);
     }
 
     #[test]
