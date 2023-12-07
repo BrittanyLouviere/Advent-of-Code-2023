@@ -24,11 +24,15 @@ mod part_2 {
 mod tests {
     use super::*;
 
-    const EXAMPLE_INPUT: &str = "";
+    const EXAMPLE_INPUT: &str = "32T3K 765\n\
+    T55J5 684\n\
+    KK677 28\n\
+    KTJJT 220\n\
+    QQQJA 483";
 
     #[test]
     fn example_input_part_1_test() {
-        assert_eq!(part_1::solve(EXAMPLE_INPUT), 0);
+        assert_eq!(part_1::solve(EXAMPLE_INPUT), 6440);
     }
 
     #[test]
