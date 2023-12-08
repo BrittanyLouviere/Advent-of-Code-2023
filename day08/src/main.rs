@@ -8,14 +8,10 @@ fn main() {
     println!("Part 2: {}", part_2::solve(&input));
 }
 
-mod part_1 {
+pub(crate) mod utility {
     use std::collections::HashMap;
 
-    pub(crate) fn solve(input: &str) -> u32 {
-        let mut lines = input.lines();
-        let path: Vec<_> = lines.next().unwrap().chars().collect();
-        lines.next();
-
+    pub(crate) fn create_map(lines: Vec<&str>) -> HashMap<String, (String, String)> {
         let mut map: HashMap<String, (String, String)> = HashMap::new();
         for line in lines {
             let parsed_line: Vec<_> = line.split_whitespace().collect();
@@ -24,6 +20,20 @@ mod part_1 {
             let right = parsed_line[3][..3].to_string();
             map.insert(name, (left, right));
         }
+        map
+    }
+}
+
+mod part_1 {
+    use crate::utility::create_map;
+
+    pub(crate) fn solve(input: &str) -> u32 {
+        let mut lines = input.lines();
+        let path: Vec<_> = lines.next().unwrap().chars().collect();
+        lines.next();
+        let lines: Vec<&str> = lines.collect();
+
+        let map = create_map(lines);
 
         let mut current_node = "AAA";
         let mut current_dir = 0;
