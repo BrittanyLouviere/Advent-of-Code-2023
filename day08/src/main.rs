@@ -9,8 +9,37 @@ fn main() {
 }
 
 mod part_1 {
+    use std::collections::HashMap;
+
     pub(crate) fn solve(input: &str) -> u32 {
-        todo!()
+        let mut lines = input.lines();
+        let path: Vec<_> = lines.next().unwrap().chars().collect();
+        lines.next();
+
+        let mut map: HashMap<String, (String, String)> = HashMap::new();
+        for line in lines {
+            let parsed_line: Vec<_> = line.split_whitespace().collect();
+            let name = parsed_line[0].to_string();
+            let left = parsed_line[2][1..4].to_string();
+            let right = parsed_line[3][..3].to_string();
+            map.insert(name, (left, right));
+        }
+
+        let mut current_node = "AAA";
+        let mut current_dir = 0;
+        let mut step_count = 0;
+        while current_node != "ZZZ" {
+            let next_node = &map[current_node];
+            current_node = if path[current_dir] == 'L' {
+                &next_node.0
+            } else {
+                &next_node.1
+            };
+            current_dir += 1;
+            current_dir %= path.len();
+            step_count += 1;
+        }
+        step_count
     }
 }
 
