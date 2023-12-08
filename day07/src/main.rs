@@ -61,23 +61,13 @@ pub(crate) mod utility {
             }
             let diff_count = char_counts.len();
 
-            match diff_count {
-                1 => HandType::FiveKind,
-                2 => {
-                    if char_counts[0].1 == 4 || char_counts[0].1 == 1 {
-                        HandType::FourKind
-                    } else {
-                        HandType::FullHouse
-                    }
-                }
-                3 => {
-                    if char_counts[0].1 == 2 || char_counts[1].1 == 2 {
-                        HandType::TwoPair
-                    } else {
-                        HandType::ThreeKind
-                    }
-                }
-                4 => HandType::OnePair,
+            match (diff_count, char_counts[0].1, char_counts.get(1)) {
+                (1, _, _) => HandType::FiveKind,
+                (2, 4 | 1, _) => HandType::FourKind,
+                (2, 2 | 3, _) => HandType::FullHouse,
+                (3, 2, _) | (3, _, Some((_, 2))) => HandType::TwoPair, // 2,2,1
+                (3, _, _) => HandType::ThreeKind,                      // 3,1,1
+                (4, _, _) => HandType::OnePair,
                 _ => HandType::HighCard,
             }
         }
