@@ -57,17 +57,16 @@ pub(crate) mod utility {
             let mut char_counts = vec![];
             for i in unique_chars.drain() {
                 let count = cards.chars().filter(|x| x == &i).count();
-                char_counts.push((i, count));
+                char_counts.push(count);
             }
-            let diff_count = char_counts.len();
-
-            match (diff_count, char_counts[0].1, char_counts.get(1)) {
-                (1, _, _) => HandType::FiveKind,
-                (2, 4 | 1, _) => HandType::FourKind,
-                (2, 2 | 3, _) => HandType::FullHouse,
-                (3, 2, _) | (3, _, Some((_, 2))) => HandType::TwoPair, // 2,2,1
-                (3, _, _) => HandType::ThreeKind,                      // 3,1,1
-                (4, _, _) => HandType::OnePair,
+            char_counts.sort();
+            match &char_counts[..] {
+                [5] => HandType::FiveKind,
+                [1, 4] => HandType::FourKind,
+                [2, 3] => HandType::FullHouse,
+                [1, 1, 3] => HandType::ThreeKind,
+                [1, 2, 2] => HandType::TwoPair,
+                [1, 1, 1, 2] => HandType::OnePair,
                 _ => HandType::HighCard,
             }
         }
