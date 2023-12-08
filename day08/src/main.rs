@@ -75,8 +75,19 @@ ZZZ = (ZZZ, ZZZ)";
         assert_eq!(part_1::solve(EXAMPLE_INPUT_2), 6);
     }
 
+    const EXAMPLE_INPUT_3: &str = r"LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)";
+
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(EXAMPLE_INPUT), 0);
+        assert_eq!(part_2::solve(EXAMPLE_INPUT_3), 6);
     }
 }
