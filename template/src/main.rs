@@ -10,13 +10,13 @@ fn main() {
 
 mod part_1 {
     pub(crate) fn solve(input: &str) -> u32 {
-        0
+        todo!()
     }
 }
 
 mod part_2 {
     pub(crate) fn solve(input: &str) -> u32 {
-        0
+        todo!()
     }
 }
 
