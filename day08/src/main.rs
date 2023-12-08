@@ -54,8 +54,61 @@ mod part_1 {
 }
 
 mod part_2 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        todo!()
+    use num::integer::lcm;
+    use std::collections::HashMap;
+
+    use crate::utility::create_map;
+
+    pub(crate) fn solve(input: &str) -> u64 {
+        let mut lines = input.lines();
+        let path: Vec<_> = lines.next().unwrap().chars().collect();
+        lines.next();
+        let lines: Vec<&str> = lines.collect();
+
+        let map = create_map(lines);
+
+        let start_nodes = map
+            .keys()
+            .filter(|x| x.ends_with('A'))
+            .map(std::string::ToString::to_string);
+
+        let mut node_patterns: Vec<u64> = vec![];
+        for node in start_nodes {
+            node_patterns.push(get_node_pattern(&map, &node, &path));
+        }
+
+        let mut steps: u64 = 1;
+        for x in &node_patterns {
+            steps = lcm(steps, *x);
+        }
+        steps
+    }
+
+    fn get_node_pattern(
+        map: &HashMap<String, (String, String)>,
+        node: &str,
+        path: &Vec<char>,
+    ) -> u64 {
+        let mut current_node = node;
+        let mut step_count = 0;
+        let mut current_dir = 0;
+
+        loop {
+            let next_node = &map[current_node];
+            current_node = if path[current_dir] == 'L' {
+                &next_node.0
+            } else {
+                &next_node.1
+            };
+            current_dir += 1;
+            current_dir %= path.len();
+            step_count += 1;
+
+            if current_node.ends_with('Z') {
+                break;
+            }
+        }
+        step_count
     }
 }
 
