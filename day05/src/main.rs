@@ -162,7 +162,11 @@ mod part_2 {
             sources = destinations;
         }
 
-        *sources.iter().map(std::ops::RangeInclusive::start).min().unwrap()
+        *sources
+            .iter()
+            .map(std::ops::RangeInclusive::start)
+            .min()
+            .unwrap()
     }
 }
 
