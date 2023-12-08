@@ -30,8 +30,13 @@ pub(crate) mod utility {
     }
 
     impl Hand {
-        pub(crate) fn new(cards: &str, bid: u64, card_ranks: &HashMap<char, u64>) -> Hand {
-            let hand_type = Self::get_type(cards);
+        pub(crate) fn new(
+            cards: &str,
+            bid: u64,
+            card_ranks: &HashMap<char, u64>,
+            jokers_enabled: bool,
+        ) -> Hand {
+            let hand_type = Self::get_type(cards, jokers_enabled);
             let cards = Self::convert_cards_to_ranks(cards, card_ranks);
             Hand {
                 hand_type,
@@ -49,7 +54,7 @@ pub(crate) mod utility {
             ranks
         }
 
-        fn get_type(cards: &str) -> HandType {
+        fn get_type(cards: &str, jokers_enabled: bool) -> HandType {
             let mut unique_chars = HashSet::new();
             for c in cards.chars() {
                 unique_chars.insert(c);
@@ -60,13 +65,19 @@ pub(crate) mod utility {
                 char_counts.push(count);
             }
             char_counts.sort();
-            match &char_counts[..] {
-                [5] => HandType::FiveKind,
-                [1, 4] => HandType::FourKind,
-                [2, 3] => HandType::FullHouse,
-                [1, 1, 3] => HandType::ThreeKind,
-                [1, 2, 2] => HandType::TwoPair,
-                [1, 1, 1, 2] => HandType::OnePair,
+            let joker_count = if !jokers_enabled {
+                0
+            } else {
+                cards.chars().filter(|x| x == &'J').count()
+            };
+
+            match (&char_counts[..], joker_count) {
+                ([5], _) | ([1, 4], 1 | 4) | ([2, 3], 2 | 3) => HandType::FiveKind,
+                ([1, 4], 0) | ([1, 1, 3], 1 | 3) | ([1, 2, 2], 2) => HandType::FourKind,
+                ([2, 3], 0) | ([1, 2, 2], 1) => HandType::FullHouse,
+                ([1, 1, 3], 0) | ([1, 1, 1, 2], 1 | 2) => HandType::ThreeKind,
+                ([1, 2, 2], 0) => HandType::TwoPair,
+                ([1, 1, 1, 2], 0) | ([1, 1, 1, 1, 1], 1) => HandType::OnePair,
                 _ => HandType::HighCard,
             }
         }
@@ -89,7 +100,7 @@ mod part_1 {
             let cards = parsed.next().unwrap().to_string();
             let bid = parsed.next().unwrap().parse::<u64>().unwrap();
 
-            hands.push(Hand::new(&cards, bid, &card_ranks));
+            hands.push(Hand::new(&cards, bid, &card_ranks, false));
         }
 
         hands.sort();
@@ -102,8 +113,30 @@ mod part_1 {
 }
 
 mod part_2 {
+    use crate::utility::Hand;
+    use std::{collections::HashMap, vec};
+
     pub(crate) fn solve(input: &str) -> u64 {
-        0
+        let card_ranks: HashMap<_, _> = "J23456789TQKA"
+            .chars()
+            .zip([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+            .collect();
+        let mut hands = vec![];
+
+        for line in input.lines() {
+            let mut parsed = line.split_whitespace();
+            let cards = parsed.next().unwrap().to_string();
+            let bid = parsed.next().unwrap().parse::<u64>().unwrap();
+
+            hands.push(Hand::new(&cards, bid, &card_ranks, true));
+        }
+
+        hands.sort();
+        let mut sum = 0;
+        for (i, hand) in hands.iter().enumerate() {
+            sum += (i as u64 + 1) * hand.bid;
+        }
+        sum
     }
 }
 
@@ -133,11 +166,11 @@ mod tests {
             .zip([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
             .collect();
         let mut hands = vec![];
-        hands.push(Hand::new("32T3K", 0, &card_ranks));
-        hands.push(Hand::new("KK677", 0, &card_ranks));
-        hands.push(Hand::new("KTJJT", 0, &card_ranks));
-        hands.push(Hand::new("T55J5", 0, &card_ranks));
-        hands.push(Hand::new("QQQJA", 0, &card_ranks));
+        hands.push(Hand::new("32T3K", 0, &card_ranks, false));
+        hands.push(Hand::new("KK677", 0, &card_ranks, false));
+        hands.push(Hand::new("KTJJT", 0, &card_ranks, false));
+        hands.push(Hand::new("T55J5", 0, &card_ranks, false));
+        hands.push(Hand::new("QQQJA", 0, &card_ranks, false));
 
         assert_eq!(hands[0].hand_type, HandType::OnePair);
         assert_eq!(hands[1].hand_type, HandType::TwoPair);
