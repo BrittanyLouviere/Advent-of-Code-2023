@@ -64,11 +64,11 @@ pub(crate) mod utility {
                 let count = cards.chars().filter(|x| x == &i).count();
                 char_counts.push(count);
             }
-            char_counts.sort();
-            let joker_count = if !jokers_enabled {
-                0
-            } else {
+            char_counts.sort_unstable();
+            let joker_count = if jokers_enabled {
                 cards.chars().filter(|x| x == &'J').count()
+            } else {
+                0
             };
 
             match (&char_counts[..], joker_count) {
@@ -166,11 +166,9 @@ mod tests {
             .zip([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
             .collect();
         let mut hands = vec![];
-        hands.push(Hand::new("32T3K", 0, &card_ranks, false));
-        hands.push(Hand::new("KK677", 0, &card_ranks, false));
-        hands.push(Hand::new("KTJJT", 0, &card_ranks, false));
-        hands.push(Hand::new("T55J5", 0, &card_ranks, false));
-        hands.push(Hand::new("QQQJA", 0, &card_ranks, false));
+        for cards in ["32T3K", "KK677", "KTJJT", "T55J5", "QQQJA"] {
+            hands.push(Hand::new(cards, 0, &card_ranks, false));
+        }
 
         assert_eq!(hands[0].hand_type, HandType::OnePair);
         assert_eq!(hands[1].hand_type, HandType::TwoPair);
