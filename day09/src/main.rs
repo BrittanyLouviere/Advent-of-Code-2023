@@ -46,8 +46,39 @@ mod part_1 {
 }
 
 mod part_2 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        todo!()
+    pub(crate) fn solve(input: &str) -> i32 {
+        let mut sum = 0;
+        for line in input.lines() {
+            let history = line
+                .split_whitespace()
+                .map(|x| x.parse::<i32>().unwrap())
+                .collect();
+            sum += extrapolate(history);
+        }
+        sum
+    }
+
+    fn extrapolate(history: Vec<i32>) -> i32 {
+        let mut sequences = vec![history];
+        loop {
+            let current_seq = sequences.last().unwrap();
+            let mut new_seq = vec![];
+            for i in 0..(current_seq.len() - 1) {
+                let v1 = current_seq[i];
+                let v2 = current_seq[i + 1];
+                new_seq.push(v2 - v1);
+            }
+            if new_seq.iter().all(|x| x == &0) {
+                break;
+            }
+            sequences.push(new_seq);
+        }
+
+        let mut current_num = 0;
+        for seq in sequences.iter().rev() {
+            current_num = seq.first().unwrap() - current_num;
+        }
+        current_num
     }
 }
 
