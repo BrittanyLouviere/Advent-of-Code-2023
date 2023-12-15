@@ -1,5 +1,6 @@
 #![warn(clippy::pedantic)]
 use std::fs;
+extern crate num;
 
 fn main() {
     let input: String =
@@ -9,7 +10,14 @@ fn main() {
 }
 
 pub(crate) mod utility {
-    pub(crate) fn extrapolate(history: Vec<i32>, next_val: bool) -> i32 {
+    use num::Zero;
+    use std::cmp::PartialEq;
+    use std::ops::{AddAssign, Sub};
+
+    pub(crate) fn extrapolate<T>(history: Vec<T>, next_val: bool) -> T
+    where
+        T: PartialEq + AddAssign + Zero + Copy + Sub<Output = T>,
+    {
         let mut sequences = vec![history];
         loop {
             let current_seq = sequences.last().unwrap();
@@ -19,18 +27,18 @@ pub(crate) mod utility {
                 let v2 = current_seq[i + 1];
                 new_seq.push(v2 - v1);
             }
-            if new_seq.iter().all(|x| x == &0) {
+            if new_seq.iter().all(|x| x == &T::zero()) {
                 break;
             }
             sequences.push(new_seq);
         }
 
-        let mut current_num = 0;
+        let mut current_num = T::zero();
         for seq in sequences.iter().rev() {
             if next_val {
-                current_num += seq.last().unwrap();
+                current_num += *seq.last().unwrap();
             } else {
-                current_num = seq.first().unwrap() - current_num;
+                current_num = *seq.first().unwrap() - current_num;
             }
         }
         current_num
@@ -45,7 +53,7 @@ mod part_1 {
         for line in input.lines() {
             let history = line
                 .split_whitespace()
-                .map(|x| x.parse().unwrap())
+                .map(|x| x.parse::<i32>().unwrap())
                 .collect();
             sum += extrapolate(history, true);
         }
@@ -61,7 +69,7 @@ mod part_2 {
         for line in input.lines() {
             let history = line
                 .split_whitespace()
-                .map(|x| x.parse().unwrap())
+                .map(|x| x.parse::<i32>().unwrap())
                 .collect();
             sum += extrapolate(history, false);
         }
