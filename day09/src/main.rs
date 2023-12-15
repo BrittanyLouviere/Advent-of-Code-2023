@@ -45,7 +45,7 @@ mod part_1 {
         for line in input.lines() {
             let history = line
                 .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
+                .map(|x| x.parse().unwrap())
                 .collect();
             sum += extrapolate(history, true);
         }
@@ -61,7 +61,7 @@ mod part_2 {
         for line in input.lines() {
             let history = line
                 .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
+                .map(|x| x.parse().unwrap())
                 .collect();
             sum += extrapolate(history, false);
         }
