@@ -12,7 +12,10 @@ mod part_1 {
     pub(crate) fn solve(input: &str) -> i32 {
         let mut sum = 0;
         for line in input.lines() {
-            let history = line.split_whitespace().map(|x| x.parse::<i32>().unwrap()).collect();
+            let history = line
+                .split_whitespace()
+                .map(|x| x.parse::<i32>().unwrap())
+                .collect();
             sum += extrapolate(history);
         }
         sum
@@ -23,10 +26,10 @@ mod part_1 {
         loop {
             let current_seq = sequences.last().unwrap();
             let mut new_seq = vec![];
-            for i in 0..(current_seq.len()-1) {
+            for i in 0..(current_seq.len() - 1) {
                 let v1 = current_seq[i];
-                let v2 = current_seq[i+1];
-                new_seq.push(v2-v1);
+                let v2 = current_seq[i + 1];
+                new_seq.push(v2 - v1);
             }
             if new_seq.iter().all(|x| x == &0) {
                 break;
@@ -35,7 +38,7 @@ mod part_1 {
         }
 
         let mut current_num = 0;
-        for seq in sequences.iter().rev(){
+        for seq in sequences.iter().rev() {
             current_num += seq.last().unwrap();
         }
         current_num
@@ -63,6 +66,6 @@ mod tests {
 
     #[test]
     fn example_input_part_2_test() {
-        assert_eq!(part_2::solve(EXAMPLE_INPUT), 0);
+        assert_eq!(part_2::solve(EXAMPLE_INPUT), 2);
     }
 }
