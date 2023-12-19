@@ -10,13 +10,11 @@ fn main() {
 }
 
 pub(crate) mod utility {
-    use num::Zero;
-    use std::cmp::PartialEq;
-    use std::ops::{AddAssign, Sub};
+    use num::traits::NumAssign;
 
     pub(crate) fn extrapolate<T>(history: Vec<T>, next_val: bool) -> T
     where
-        T: PartialEq + AddAssign + Zero + Copy + Sub<Output = T>,
+        T: NumAssign + Copy,
     {
         let mut sequences = vec![history];
         loop {
