@@ -2,7 +2,6 @@ pub fn get_input() -> String {
     std::fs::read_to_string("./day09/input.txt").unwrap_or_else(|_| {
         std::fs::read_to_string("../day09/input.txt").expect("Input file could not be read.")
     })
-    //.expect("Input file could not be read.")
 }
 
 pub(crate) mod utility {
@@ -41,32 +40,35 @@ pub(crate) mod utility {
 
 pub mod part_1 {
     use crate::utility::extrapolate;
+    use std::thread;
 
     pub fn solve(input: &str) -> i32 {
-        let mut sum = 0;
+        let mut handles = vec![];
         for line in input.lines() {
             let history = line
                 .split_whitespace()
                 .map(|x| x.parse::<i32>().unwrap())
                 .collect();
-            sum += extrapolate(history, true);
+            handles.push(thread::spawn(|| extrapolate(history, true)));
         }
-        sum
+
+        handles.into_iter().map(|x| x.join().unwrap()).sum()
     }
 }
 
 pub mod part_2 {
     use crate::utility::extrapolate;
+    use std::thread;
 
     pub fn solve(input: &str) -> i32 {
-        let mut sum = 0;
+        let mut handles = vec![];
         for line in input.lines() {
             let history = line
                 .split_whitespace()
                 .map(|x| x.parse::<i32>().unwrap())
                 .collect();
-            sum += extrapolate(history, false);
+            handles.push(thread::spawn(|| extrapolate(history, false)));
         }
-        sum
+        handles.into_iter().map(|x| x.join().unwrap()).sum()
     }
 }
