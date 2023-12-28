@@ -41,32 +41,40 @@ pub(crate) mod utility {
 
 pub mod part_1 {
     use crate::utility::extrapolate;
+    use rayon::prelude::*;
 
     pub fn solve(input: &str) -> i32 {
-        let mut sum = 0;
-        for line in input.lines() {
-            let history = line
-                .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect();
-            sum += extrapolate(history, true);
-        }
-        sum
+        let lines: Vec<&str> = input.lines().collect();
+
+        lines
+            .par_iter()
+            .map(|line| {
+                let history = line
+                    .split_whitespace()
+                    .map(|x| x.parse::<i32>().unwrap())
+                    .collect();
+                extrapolate(history, true)
+            })
+            .sum()
     }
 }
 
 pub mod part_2 {
     use crate::utility::extrapolate;
+    use rayon::prelude::*;
 
     pub fn solve(input: &str) -> i32 {
-        let mut sum = 0;
-        for line in input.lines() {
-            let history = line
-                .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect();
-            sum += extrapolate(history, false);
-        }
-        sum
+        let lines: Vec<&str> = input.lines().collect();
+
+        lines
+            .par_iter()
+            .map(|line| {
+                let history = line
+                    .split_whitespace()
+                    .map(|x| x.parse::<i32>().unwrap())
+                    .collect();
+                extrapolate(history, false)
+            })
+            .sum()
     }
 }
