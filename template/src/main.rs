@@ -1,23 +1,10 @@
 #![warn(clippy::pedantic)]
-use std::fs;
+use {{project-name}}::{get_input, part_1, part_2};
 
 fn main() {
-    let input: String =
-        fs::read_to_string("./{{project-name}}/input.txt").expect("Input file could not be read.");
+    let input: String = get_input();
     println!("Part 1: {}", part_1::solve(&input));
     println!("Part 2: {}", part_2::solve(&input));
-}
-
-mod part_1 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        todo!()
-    }
-}
-
-mod part_2 {
-    pub(crate) fn solve(input: &str) -> u32 {
-        todo!()
-    }
 }
 
 #[cfg(test)]
