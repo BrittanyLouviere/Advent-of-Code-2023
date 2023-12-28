@@ -41,32 +41,60 @@ pub(crate) mod utility {
 
 pub mod part_1 {
     use crate::utility::extrapolate;
+    use std::thread;
 
     pub fn solve(input: &str) -> i32 {
-        let mut sum = 0;
-        for line in input.lines() {
-            let history = line
-                .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect();
-            sum += extrapolate(history, true);
+        const THREAD_COUNT: usize = 8;
+
+        let lines: Vec<String> = input.lines().map(str::to_string).collect();
+        let chunk_size = THREAD_COUNT.max(lines.len() / THREAD_COUNT);
+        let chunked_lines = lines.chunks(chunk_size).map(|x: &[String]| x.to_vec());
+        let mut handles = vec![];
+
+        for chunk in chunked_lines {
+            handles.push(thread::spawn(move || {
+                let mut sum = 0;
+                for line in chunk {
+                    let history = line
+                        .split_whitespace()
+                        .map(|x| x.parse::<i32>().unwrap())
+                        .collect();
+                    sum += extrapolate(history, true);
+                }
+                sum
+            }));
         }
-        sum
+
+        handles.into_iter().map(|x| x.join().unwrap()).sum()
     }
 }
 
 pub mod part_2 {
     use crate::utility::extrapolate;
+    use std::thread;
 
     pub fn solve(input: &str) -> i32 {
-        let mut sum = 0;
-        for line in input.lines() {
-            let history = line
-                .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect();
-            sum += extrapolate(history, false);
+        const THREAD_COUNT: usize = 8;
+
+        let lines: Vec<String> = input.lines().map(str::to_string).collect();
+        let chunk_size = THREAD_COUNT.max(lines.len() / THREAD_COUNT);
+        let chunked_lines = lines.chunks(chunk_size).map(|x: &[String]| x.to_vec());
+        let mut handles = vec![];
+
+        for chunk in chunked_lines {
+            handles.push(thread::spawn(move || {
+                let mut sum = 0;
+                for line in chunk {
+                    let history = line
+                        .split_whitespace()
+                        .map(|x| x.parse::<i32>().unwrap())
+                        .collect();
+                    sum += extrapolate(history, false);
+                }
+                sum
+            }));
         }
-        sum
+
+        handles.into_iter().map(|x| x.join().unwrap()).sum()
     }
 }
